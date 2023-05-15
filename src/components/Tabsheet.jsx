@@ -1,6 +1,6 @@
 // "[1:5,-,3:7,-,3:5,-,3:7,-,-,3:5,3:7,-,1:8,-,1:5]"
 
-export function Tabsheet({ lines }) {
+export const Tabsheet = ({ lines }) => {
   const [width, height] = [500, 200];
 
   function renderLine(currLine, index) {
@@ -18,4 +18,4 @@ export function Tabsheet({ lines }) {
       </svg>
     </div>
   );
-}
+};

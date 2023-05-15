@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Fretboard } from "./Fretboard";
-import { Tabsheet } from "./Tabsheet";
+import { Fretboard } from "./components/Fretboard";
+import { Tabsheet } from "./components/Tabsheet";
 import "./styles.css";
 
 function App() {
