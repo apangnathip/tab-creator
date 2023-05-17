@@ -1,14 +1,24 @@
-const tuningNotes = {
+import React from "react";
+import { BoardProps } from "../../App";
+
+interface NotesProps {
+  boardProps: BoardProps;
+  frets: Array<JSX.Element>;
+  fretWidth: number;
+  setNotation: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const tuningNotes: { [tuning: string]: Array<string> } = {
   E: ["E4", "B3", "G3", "D3", "A2", "E2"],
   Eb: ["Eb4", "Bb3", "Gb3", "Db3", "Ab2", "Eb2"],
   "Drop-D": ["E4", "B3", "G3", "D3", "A2", "D2"],
 };
 
-const nextNote = (currNote) => {
-  let octave = currNote.slice(-1);
+const nextNote = (currNote: string) => {
+  let octave: string = currNote.slice(-1);
 
   if (currNote.charAt(0) == "B" && currNote.charAt(1) != "b") {
-    octave = parseInt(octave) + 1;
+    octave = (parseInt(octave) + 1).toString();
   }
 
   if (currNote.charAt(0) == "G" && currNote.charAt(1) != "b") {
@@ -26,8 +36,13 @@ const nextNote = (currNote) => {
   return nextNote + octave;
 };
 
-const createNotes = (setNotation, fretboard, fretWidth, frets) => {
-  const { fretCount, tuning, stringCount } = fretboard;
+const createNotes = (
+  setNotation: React.Dispatch<React.SetStateAction<string>>,
+  boardProps: BoardProps,
+  fretWidth: number,
+  frets: Array<JSX.Element>
+) => {
+  const { fretCount, tuning, stringCount } = boardProps;
   let notes = [];
   let noteMemo = [tuningNotes[tuning]];
 
@@ -49,7 +64,14 @@ const createNotes = (setNotation, fretboard, fretWidth, frets) => {
         noteMemo[i][j] = nextNote(noteMemo[i - 1][j]);
       }
       fret.push(
-        <div note={noteMemo[i][j]} onClick={(e) => setNotation((currentNotation) => `${currentNotation}${j + 1}:${i},`)} style={{ width: gapWidth }} key={j}>
+        <div
+          className="fret-button"
+          onClick={() =>
+            setNotation((currentNotation) => `${currentNotation}${j + 1}:${i},`)
+          }
+          style={{ width: gapWidth }}
+          key={j}
+        >
           <p style={{ visibility: "hidden" }}>{noteMemo[i][j]}</p>
         </div>
       );
@@ -65,6 +87,8 @@ const createNotes = (setNotation, fretboard, fretWidth, frets) => {
   return notes;
 };
 
-export const Notes = ({ fretboard, fretWidth, frets, setNotation }) => {
-  return <ul id="fretboard-notes">{createNotes(setNotation, fretboard, fretWidth, frets)}</ul>;
+export const Notes = ({ boardProps, fretWidth, frets, setNotation }: NotesProps) => {
+  return (
+    <ul id="fretboard-notes">{createNotes(setNotation, boardProps, fretWidth, frets)}</ul>
+  );
 };

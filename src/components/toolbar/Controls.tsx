@@ -1,4 +1,4 @@
-const techniques = {
+const techniques: { [name: string]: string } = {
   c: "Chord",
   h: "Hammer-on",
   p: "Pull-off",
@@ -9,7 +9,11 @@ const techniques = {
   t: "Tap",
 };
 
-export const Techbar = ({ notation, setNotation }) => {
+type TechniquesProps = {
+  setNotation: React.Dispatch<React.SetStateAction<string>>;
+};
+
+export const Controls = ({ setNotation }: TechniquesProps) => {
   return (
     <div id="techbar">
       {Object.entries(techniques).map(([tech, desc]) => {

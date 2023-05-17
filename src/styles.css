@@ -26,6 +26,7 @@
 }
 
 #fretboard-notes {
+  height: 100%;
   position: absolute;
   display: flex;
   top: 0;
@@ -39,6 +40,14 @@
   flex-direction: column;
 }
 
-/* .techs-button {
-  width: 30px;
-} */
+.fret-button {
+  height: 100%;
+  position: relative;
+}
+
+.fret-button:hover::after {
+  content: "hi";
+  position: absolute;
+  top: 0;
+  left: 0;
+}
