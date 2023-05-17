@@ -26,7 +26,7 @@ const nextNote = (currNote) => {
   return nextNote + octave;
 };
 
-const createNotes = (fretboard, fretWidth, frets) => {
+const createNotes = (setNotation, fretboard, fretWidth, frets) => {
   const { fretCount, tuning, stringCount } = fretboard;
   let notes = [];
   let noteMemo = [tuningNotes[tuning]];
@@ -49,7 +49,7 @@ const createNotes = (fretboard, fretWidth, frets) => {
         noteMemo[i][j] = nextNote(noteMemo[i - 1][j]);
       }
       fret.push(
-        <div note={noteMemo[i][j]} onClick={(e) => console.log(`${j + 1}:${i}`)} style={{ width: gapWidth }} key={j}>
+        <div note={noteMemo[i][j]} onClick={(e) => setNotation((currentNotation) => `${currentNotation}${j + 1}:${i},`)} style={{ width: gapWidth }} key={j}>
           <p style={{ visibility: "hidden" }}>{noteMemo[i][j]}</p>
         </div>
       );
@@ -65,6 +65,6 @@ const createNotes = (fretboard, fretWidth, frets) => {
   return notes;
 };
 
-export const Notes = ({ fretboard, sheetNotation, fretWidth, frets }) => {
-  return <ul id="fretboard-notes">{createNotes(fretboard, fretWidth, frets)}</ul>;
+export const Notes = ({ fretboard, fretWidth, frets, setNotation }) => {
+  return <ul id="fretboard-notes">{createNotes(setNotation, fretboard, fretWidth, frets)}</ul>;
 };

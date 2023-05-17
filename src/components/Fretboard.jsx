@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Notes } from "./Notes";
 
 const fretWidth = 2;
@@ -58,7 +58,7 @@ const createMarkers = ({ height }, frets, { stringCount }) => {
   return markers;
 };
 
-export const Fretboard = ({ fretboard, sheetNotation }) => {
+export const Fretboard = ({ fretboard, setNotation }) => {
   const [dimension, setDimension] = useState({ width: 0, height: 0 });
   const ref = useRef(null);
 
@@ -78,16 +78,14 @@ export const Fretboard = ({ fretboard, sheetNotation }) => {
   const markers = createMarkers(dimension, frets, fretboard);
 
   return (
-    <div id="toolbar">
-      <div id="fretboard-container" style={{ height: "100%" }} ref={ref}>
-        <svg height="100%" width="100%">
-          <rect height="100%" width="100%" fill="#202020" />
-          {frets}
-          {markers}
-          {strings}
-        </svg>
-        <Notes fretboard={fretboard} sheetNotation={sheetNotation} fretWidth={fretWidth} frets={frets} />
-      </div>
+    <div id="fretboard-container" style={{ height: "100%" }} ref={ref}>
+      <svg height="100%" width="100%">
+        <rect height="100%" width="100%" fill="#202020" />
+        {frets}
+        {markers}
+        {strings}
+      </svg>
+      <Notes fretboard={fretboard} fretWidth={fretWidth} frets={frets} setNotation={setNotation} />
     </div>
   );
 };
