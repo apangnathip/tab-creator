@@ -1,0 +1,28 @@
+.root {
+  height: 100%;
+  position: relative;
+  flex: 4;
+}
+
+.wrapper {
+  height: 100%;
+  width: 100%;
+}
+
+.wood {
+  height: 100%;
+  width: 100%;
+  fill: #202020;
+}
+
+.nut {
+  fill: beige;
+}
+
+.fret {
+  fill: grey;
+}
+
+.marker {
+  fill: white;
+}

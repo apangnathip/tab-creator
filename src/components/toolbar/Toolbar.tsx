@@ -1,17 +1,12 @@
-import { BoardProps } from "../../App";
-import { Fretboard } from "./Fretboard";
 import { Controls } from "./Controls";
+import { Fretboard } from "./Fretboard";
+import styles from "./Toolbar.module.css";
 
-interface ToolbarProps {
-  boardProps: BoardProps;
-  setNotation: React.Dispatch<React.SetStateAction<string>>;
-}
-
-export const Toolbar = ({ boardProps, setNotation }: ToolbarProps) => {
+export function Toolbar() {
   return (
-    <div id="toolbar">
-      <Controls setNotation={setNotation} />
-      <Fretboard boardProps={boardProps} setNotation={setNotation} />
+    <div className={styles.root}>
+      <Controls />
+      <Fretboard />
     </div>
   );
-};
+}

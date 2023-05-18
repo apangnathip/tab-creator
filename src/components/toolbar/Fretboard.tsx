@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
+import { Board, BoardContext } from "../contexts/BoardContext";
+import { NotationContext } from "../contexts/NotationContext";
 import { Notes } from "./Notes";
-import { BoardProps } from "../../App";
+import styles from "./Fretboard.module.css";
 
-interface FretboardProps {
-  boardProps: BoardProps;
-  setNotation: React.Dispatch<React.SetStateAction<string>>;
+interface Fretboard {
+  addNotation: (noteInfo: { string: number; fret: number }) => void;
 }
 
 interface Dimension {
@@ -16,9 +17,9 @@ const fretWidth = 2;
 const markerPos = new Set([3, 5, 7, 9, 12, 15, 17, 19, 21, 24]);
 const maxFretScaling = 1.5;
 
-const createStrings = (dimension: Dimension, boardProps: BoardProps) => {
+function createStrings(dimension: Dimension, board: Board) {
   const { width, height } = dimension;
-  const { stringCount } = boardProps;
+  const { stringCount } = board;
 
   let strings = [];
   const stringWidth = Array.from({ length: stringCount }, (_, i) => i / 3 + 1);
@@ -37,11 +38,11 @@ const createStrings = (dimension: Dimension, boardProps: BoardProps) => {
   }
 
   return strings;
-};
+}
 
-const createFrets = (dimension: Dimension, boardProps: BoardProps) => {
+function createFrets(dimension: Dimension, board: Board) {
   const { width, height } = dimension;
-  const { fretCount } = boardProps;
+  const { fretCount } = board;
 
   let frets = [];
   let nutPos = width - 0.97 * width;
@@ -51,31 +52,33 @@ const createFrets = (dimension: Dimension, boardProps: BoardProps) => {
   let initPos = nutPos - fretWidth;
 
   frets.push(
-    <rect x={nutPos} width={fretWidth * 2} height={height} fill="beige" key={"nut"} />
+    <rect
+      className={styles.nut}
+      x={nutPos}
+      width={fretWidth * 2}
+      height={height}
+      key={"nut"}
+    />
   );
 
   for (let i = 1; i < fretCount + 1; i++) {
     frets.push(
       <rect
+        className={styles.fret}
         x={initPos + fretSpacing * i}
         width={fretWidth}
         height={height}
-        fill="grey"
         key={i}
       />
     );
     fretSpacing -= fretDecrement;
   }
   return frets;
-};
+}
 
-const createMarkers = (
-  dimension: Dimension,
-  frets: Array<JSX.Element>,
-  boardProps: BoardProps
-) => {
+function createMarkers(dimension: Dimension, frets: JSX.Element[], board: Board) {
   const { height } = dimension;
-  const { stringCount } = boardProps;
+  const { stringCount } = board;
   let markers = [];
   let markerSize = (height / stringCount) * 0.25;
 
@@ -90,24 +93,30 @@ const createMarkers = (
 
     if ((i + 1) % 2) {
       markers.push(
-        <circle cx={midFret} cy={height / 2} r={markerSize} fill="white" key={i + 1} />
+        <circle
+          className={styles.marker}
+          cx={midFret}
+          cy={height / 2}
+          r={markerSize}
+          key={i + 1}
+        />
       );
     } else {
       markers.push(
         <circle
+          className={styles.marker}
           cx={midFret}
           cy={height / 4}
           r={markerSize}
-          fill="white"
           key={"top " + i + 1}
         />
       );
       markers.push(
         <circle
+          className={styles.marker}
           cx={midFret}
           cy={height * 0.75}
           r={markerSize}
-          fill="white"
           key={"bot " + i + 1}
         />
       );
@@ -115,9 +124,11 @@ const createMarkers = (
   }
 
   return markers;
-};
+}
 
-export const Fretboard = ({ boardProps, setNotation }: FretboardProps) => {
+export function Fretboard() {
+  const { board } = useContext(BoardContext);
+  const { addNotation } = useContext(NotationContext);
   const ref = useRef<HTMLDivElement | null>(null);
   const [dimension, setDimension] = useState<Dimension>({
     width: 0,
@@ -140,24 +151,19 @@ export const Fretboard = ({ boardProps, setNotation }: FretboardProps) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const strings = createStrings(dimension, boardProps);
-  const frets = createFrets(dimension, boardProps);
-  const markers = createMarkers(dimension, frets, boardProps);
+  const strings = createStrings(dimension, board);
+  const frets = createFrets(dimension, board);
+  const markers = createMarkers(dimension, frets, board);
 
   return (
-    <div id="fretboard-container" style={{ height: "100%" }} ref={ref}>
-      <svg height="100%" width="100%">
-        <rect height="100%" width="100%" fill="#202020" />
+    <div className={styles.root} ref={ref}>
+      <svg className={styles.wrapper}>
+        <rect className={styles.wood} />
         {frets}
         {markers}
         {strings}
       </svg>
-      <Notes
-        boardProps={boardProps}
-        fretWidth={fretWidth}
-        frets={frets}
-        setNotation={setNotation}
-      />
+      <Notes fretWidth={fretWidth} frets={frets} addNotation={addNotation} />
     </div>
   );
-};
+}

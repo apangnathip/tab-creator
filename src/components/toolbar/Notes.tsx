@@ -1,11 +1,11 @@
-import React from "react";
-import { BoardProps } from "../../App";
+import { useContext } from "react";
+import { Board, BoardContext } from "../contexts/BoardContext";
+import styles from "./Notes.module.css";
 
 interface NotesProps {
-  boardProps: BoardProps;
-  frets: Array<JSX.Element>;
+  addNotation: (noteInfo: { string: number; fret: number }) => void;
+  frets: JSX.Element[];
   fretWidth: number;
-  setNotation: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const tuningNotes: { [tuning: string]: Array<string> } = {
@@ -14,7 +14,7 @@ const tuningNotes: { [tuning: string]: Array<string> } = {
   "Drop-D": ["E4", "B3", "G3", "D3", "A2", "D2"],
 };
 
-const nextNote = (currNote: string) => {
+function nextNote(currNote: string) {
   let octave: string = currNote.slice(-1);
 
   if (currNote.charAt(0) == "B" && currNote.charAt(1) != "b") {
@@ -34,61 +34,60 @@ const nextNote = (currNote: string) => {
     nextNote += "b";
   }
   return nextNote + octave;
-};
+}
 
-const createNotes = (
-  setNotation: React.Dispatch<React.SetStateAction<string>>,
-  boardProps: BoardProps,
+function createNotes(
+  addNotation: (note: { string: number; fret: number }) => void,
+  boardProps: Board,
   fretWidth: number,
   frets: Array<JSX.Element>
-) => {
+) {
   const { fretCount, tuning, stringCount } = boardProps;
   let notes = [];
   let noteMemo = [tuningNotes[tuning]];
 
-  for (let i = 0; i < fretCount + 1; i++) {
-    let fret = [];
-    let gapWidth = frets[i].props.x;
+  for (let fret = 0; fret < fretCount + 1; fret++) {
+    let fretButtons = [];
+    let gapWidth = frets[fret].props.x;
     noteMemo.push([]);
 
-    if (i == 0) {
+    if (fret == 0) {
       gapWidth += fretWidth * 2;
-    } else if (i == 1) {
-      gapWidth -= frets[i - 1].props.x + fretWidth;
+    } else if (fret == 1) {
+      gapWidth -= frets[fret - 1].props.x + fretWidth;
     } else {
-      gapWidth -= frets[i - 1].props.x;
+      gapWidth -= frets[fret - 1].props.x;
     }
 
-    for (let j = 0; j < stringCount; j++) {
-      if (i > 0) {
-        noteMemo[i][j] = nextNote(noteMemo[i - 1][j]);
+    for (let string = 0; string < stringCount; string++) {
+      if (fret > 0) {
+        noteMemo[fret][string] = nextNote(noteMemo[fret - 1][string]);
       }
-      fret.push(
+      fretButtons.push(
         <div
-          className="fret-button"
-          onClick={() =>
-            setNotation((currentNotation) => `${currentNotation}${j + 1}:${i},`)
-          }
+          className={styles.button}
+          onClick={() => addNotation({ string: string, fret })}
           style={{ width: gapWidth }}
-          key={j}
+          key={string}
         >
-          <p style={{ visibility: "hidden" }}>{noteMemo[i][j]}</p>
+          <p className={styles.noteOverlay}>{noteMemo[fret][string]}</p>
         </div>
       );
     }
 
     notes.push(
-      <li className="fret-col" key={i}>
-        {fret}
+      <li className={styles.col} key={fret}>
+        {fretButtons}
       </li>
     );
   }
 
   return notes;
-};
+}
 
-export const Notes = ({ boardProps, fretWidth, frets, setNotation }: NotesProps) => {
+export function Notes({ fretWidth, frets, addNotation }: NotesProps) {
+  const { board } = useContext(BoardContext);
   return (
-    <ul id="fretboard-notes">{createNotes(setNotation, boardProps, fretWidth, frets)}</ul>
+    <ul className={styles.note}>{createNotes(addNotation, board, fretWidth, frets)}</ul>
   );
-};
+}

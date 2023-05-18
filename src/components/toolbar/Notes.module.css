@@ -1,0 +1,36 @@
+.note {
+  height: 100%;
+  position: absolute;
+  display: flex;
+  top: 0;
+  left: 0;
+  text-align: center;
+  color: white;
+}
+
+.noteOverlay {
+  visibility: hidden;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+}
+
+.button {
+  height: 100%;
+  position: relative;
+}
+
+.button:hover::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -0.5rem;
+  margin-left: -0.5rem;
+  height: 1rem;
+  width: 1rem;
+  background-color: orange;
+  border-radius: 50%;
+}
