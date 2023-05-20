@@ -1,9 +1,10 @@
 .root {
   position: sticky;
-  top: 0;
   display: flex;
+  height: 115px;
+  top: 0;
   gap: 5px;
   padding: 5px;
-  height: 115px;
   background-color: rgb(70, 29, 29);
+  overflow: hidden;
 }

@@ -16,7 +16,6 @@ function reducer(state: string, action: { string: number; fret: number; techniqu
   const lastAction = state.split(",").at(-1)!;
   const lastString = parseInt(lastAction.charAt(0));
   // const lastFret = parseInt(lastAction.split(/[A-Za-z]/).at(-1)!);
-
   switch (mode) {
     case "stack":
       if (lastString == string + 1) {
@@ -31,7 +30,8 @@ function reducer(state: string, action: { string: number; fret: number; techniqu
     //   }
     //   return state;
     case "higher":
-
+      console.log("NOT IMPLEMENTED");
+      return state;
     case "chord":
       console.log("NOT IMPLEMENTED");
       return state;
@@ -51,11 +51,6 @@ export function NotationProvider({ children }: { children: React.ReactNode }) {
   const addNotation = (noteInfo: { string: number; fret: number }) => {
     dispatch({ ...noteInfo, technique });
     setTechnique("");
-    // setNotation(
-    //   (currentNotation) =>
-    //     `${currentNotation}${noteInfo.string + 1}:${technique}${noteInfo.fret},`
-    // );
-    // setTechnique("");
   };
 
   return (

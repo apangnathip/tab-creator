@@ -1,12 +1,12 @@
 import { useContext } from "react";
 import { Board, BoardContext } from "../contexts/BoardContext";
+import { NotationContext } from "../contexts/NotationContext";
 import styles from "./Notes.module.css";
 
-interface NotesProps {
-  addNotation: (noteInfo: { string: number; fret: number }) => void;
+type NotesProps = {
   frets: JSX.Element[];
   fretWidth: number;
-}
+};
 
 const tuningNotes: { [tuning: string]: Array<string> } = {
   E: ["E4", "B3", "G3", "D3", "A2", "E2"],
@@ -15,16 +15,14 @@ const tuningNotes: { [tuning: string]: Array<string> } = {
 };
 
 function nextNote(currNote: string) {
-  let octave: string = currNote.slice(-1);
+  let octave = currNote.slice(-1);
 
   if (currNote.charAt(0) == "B" && currNote.charAt(1) != "b") {
     octave = (parseInt(octave) + 1).toString();
   }
-
   if (currNote.charAt(0) == "G" && currNote.charAt(1) != "b") {
     return "A" + "b" + octave;
   }
-
   if (currNote.charAt(1) == "b") {
     return currNote.charAt(0) + octave;
   }
@@ -43,12 +41,13 @@ function createNotes(
   frets: Array<JSX.Element>
 ) {
   const { fretCount, tuning, stringCount } = boardProps;
-  let notes = [];
-  let noteMemo = [tuningNotes[tuning]];
+  const notes = [];
+  const noteMemo = [tuningNotes[tuning]];
 
   for (let fret = 0; fret < fretCount + 1; fret++) {
-    let fretButtons = [];
+    const fretButtons = [];
     let gapWidth = frets[fret].props.x;
+
     noteMemo.push([]);
 
     if (fret == 0) {
@@ -85,9 +84,8 @@ function createNotes(
   return notes;
 }
 
-export function Notes({ fretWidth, frets, addNotation }: NotesProps) {
+export function Notes({ fretWidth, frets }: NotesProps) {
+  const { addNotation } = useContext(NotationContext);
   const { board } = useContext(BoardContext);
-  return (
-    <ul className={styles.note}>{createNotes(addNotation, board, fretWidth, frets)}</ul>
-  );
+  return <ul className={styles.note}>{createNotes(addNotation, board, fretWidth, frets)}</ul>;
 }

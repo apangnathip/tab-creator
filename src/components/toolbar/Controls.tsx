@@ -21,10 +21,10 @@ export const techniques: TechniqueRecord = {
   p: new Technique("Pull-off", "stack"),
   b: new Technique("Bend", "higher"),
   r: new Technique("Release", "stack"),
+  t: new Technique("Tap", "external"),
   "/": new Technique("Slide Up", "stack"),
   "\\": new Technique("Slide Down", "stack"),
   "~": new Technique("Vibrato", "unrestrict"),
-  t: new Technique("Tap", "external"),
 };
 
 export function Controls() {

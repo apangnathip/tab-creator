@@ -1,7 +1,8 @@
 import { BoardProvider } from "./components/contexts/BoardContext";
 import { NotationProvider } from "./components/contexts/NotationContext";
 import { Controls, Fretboard, Toolbar } from "./components/toolbar";
-import { Tabsheet } from "./components/tabsheet";
+import { Viewer, Tabsheet } from "./components/viewer";
+import { Editor } from "./Editor";
 import "./styles.css";
 
 function App() {
@@ -9,11 +10,15 @@ function App() {
     <>
       <BoardProvider>
         <NotationProvider>
-          <Toolbar>
-            <Controls />
-            <Fretboard />
-          </Toolbar>
-          <Tabsheet />
+          <Editor>
+            <Toolbar>
+              <Controls />
+              <Fretboard />
+            </Toolbar>
+            <Viewer>
+              <Tabsheet />
+            </Viewer>
+          </Editor>
         </NotationProvider>
       </BoardProvider>
     </>
