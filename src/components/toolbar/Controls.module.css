@@ -4,3 +4,10 @@
   flex-wrap: wrap;
   flex: 1;
 }
+
+.btn {
+}
+
+.btnActive {
+  background-color: green;
+}

@@ -1,6 +1,7 @@
 .root {
   height: 100%;
   position: relative;
+  overflow: hidden;
   flex: 4;
 }
 

@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef, useContext, useMemo } from "react";
 import { Board, BoardContext } from "../contexts/BoardContext";
 import { NotationContext } from "../contexts/NotationContext";
 import { Notes } from "./Notes";
 import styles from "./Fretboard.module.css";
+import { useResize } from "../../hooks/useResize";
 
 interface Fretboard {
   addNotation: (noteInfo: { string: number; fret: number }) => void;
@@ -51,32 +52,18 @@ function createFrets(dimension: Dimension, board: Board) {
   let fretDecrement = (minFretSpacing * (maxFretScaling - 1)) / (fretCount + 1);
   let initPos = nutPos - fretWidth;
 
-  frets.push(
-    <rect
-      className={styles.nut}
-      x={nutPos}
-      width={fretWidth * 2}
-      height={height}
-      key={"nut"}
-    />
-  );
+  frets.push(<rect className={styles.nut} x={nutPos} width={fretWidth * 2} height={height} key={"nut"} />);
 
   for (let i = 1; i < fretCount + 1; i++) {
     frets.push(
-      <rect
-        className={styles.fret}
-        x={initPos + fretSpacing * i}
-        width={fretWidth}
-        height={height}
-        key={i}
-      />
+      <rect className={styles.fret} x={initPos + fretSpacing * i} width={fretWidth} height={height} key={i} />
     );
     fretSpacing -= fretDecrement;
   }
   return frets;
 }
 
-function createMarkers(dimension: Dimension, frets: JSX.Element[], board: Board) {
+function createMarkers(dimension: Dimension, frets: React.ReactElement[], board: Board) {
   const { height } = dimension;
   const { stringCount } = board;
   let markers = [];
@@ -92,33 +79,13 @@ function createMarkers(dimension: Dimension, frets: JSX.Element[], board: Board)
     let midFret = startFret + (endFret - startFret) / 2;
 
     if ((i + 1) % 2) {
-      markers.push(
-        <circle
-          className={styles.marker}
-          cx={midFret}
-          cy={height / 2}
-          r={markerSize}
-          key={i + 1}
-        />
-      );
+      markers.push(<circle className={styles.marker} cx={midFret} cy={height / 2} r={markerSize} key={i + 1} />);
     } else {
       markers.push(
-        <circle
-          className={styles.marker}
-          cx={midFret}
-          cy={height / 4}
-          r={markerSize}
-          key={"top " + i + 1}
-        />
+        <circle className={styles.marker} cx={midFret} cy={height / 4} r={markerSize} key={"top " + i + 1} />
       );
       markers.push(
-        <circle
-          className={styles.marker}
-          cx={midFret}
-          cy={height * 0.75}
-          r={markerSize}
-          key={"bot " + i + 1}
-        />
+        <circle className={styles.marker} cx={midFret} cy={height * 0.75} r={markerSize} key={"bot " + i + 1} />
       );
     }
   }
@@ -130,26 +97,7 @@ export function Fretboard() {
   const { board } = useContext(BoardContext);
   const { addNotation } = useContext(NotationContext);
   const ref = useRef<HTMLDivElement | null>(null);
-  const [dimension, setDimension] = useState<Dimension>({
-    width: 0,
-    height: 0,
-  });
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (ref.current) {
-        setDimension({
-          width: ref.current.clientWidth,
-          height: ref.current.clientHeight,
-        });
-      }
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const dimension = useResize(ref);
 
   const strings = createStrings(dimension, board);
   const frets = createFrets(dimension, board);
