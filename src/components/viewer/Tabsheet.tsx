@@ -12,8 +12,7 @@ function translateNotation(maxChar: number, board: Board, notation: string) {
   let lines = border.slice();
 
   for (let i = 1; i < notes.length; i++) {
-    // It is +3 instead of +2 to account for a possible two digit fret
-    if (lines[0].length + 3 >= maxChar) {
+    if (lines[0].length + 4 >= maxChar) {
       lines = lines.map((line) => line + "-".repeat(Math.abs(maxChar - line.length - 1)) + "|");
       staffs.push(lines);
       lines = border.slice();

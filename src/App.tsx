@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BoardProvider } from "./components/contexts/BoardContext";
 import { NotationProvider } from "./components/contexts/NotationContext";
 import { Controls, Fretboard, Toolbar } from "./components/toolbar";
@@ -6,15 +7,16 @@ import { Editor } from "./Editor";
 import "./styles.css";
 
 function App() {
+  const [showFretboard, setShowFretboard] = useState(false);
   return (
     <>
       <BoardProvider>
         <NotationProvider>
           <Editor>
             <Toolbar>
-              <Controls />
-              <Fretboard />
+              <Controls setShowFretboard={setShowFretboard} />
             </Toolbar>
+            {showFretboard && <Fretboard />}
             <Viewer>
               <Tabsheet />
             </Viewer>

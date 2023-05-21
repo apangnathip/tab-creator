@@ -2,8 +2,13 @@ import { useContext } from "react";
 import { NotationContext } from "../contexts/NotationContext";
 import styles from "./Controls.module.css";
 
-type Mode = "unrestrict" | "slide" | "stack" | "higher" | "chord" | "external";
-type TechniqueRecord = { [id: string]: Technique };
+type ControlsProps = {
+  setShowFretboard: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+type Mode = "unrestrict" | "stack" | "higher" | "external";
+type TechniqueList = { [id: string]: Technique };
+type ControlList = { [id: string]: string };
 
 class Technique {
   desc: string;
@@ -15,29 +20,33 @@ class Technique {
   }
 }
 
-export const techniques: TechniqueRecord = {
-  c: new Technique("Chord", "chord"),
+export const techniques: TechniqueList = {
   h: new Technique("Hammer-on", "stack"),
   p: new Technique("Pull-off", "stack"),
   b: new Technique("Bend", "higher"),
   r: new Technique("Release", "stack"),
   t: new Technique("Tap", "external"),
+  "~": new Technique("Vibrato", "unrestrict"),
   "/": new Technique("Slide Up", "stack"),
   "\\": new Technique("Slide Down", "stack"),
-  "~": new Technique("Vibrato", "unrestrict"),
 };
 
-export function Controls() {
+const controls: ControlList = {
+  "<": "Move Left",
+  ">": "Move Right",
+  F: "Fretboard",
+};
+
+export function Controls({ setShowFretboard }: ControlsProps) {
   const { technique, setTechnique } = useContext(NotationContext);
   return (
-    <div className={styles.root}>
+    <>
       {Object.entries(techniques).map(([id, tech]) => {
         if (technique === id) {
         }
         return (
           <button
-            className={technique == id ? styles.btnActive : styles.btn}
-            value={id}
+            className={technique == id ? styles.btnToggled : styles.btn}
             onClick={() => setTechnique(id)}
             title={tech.desc}
             key={id}
@@ -46,6 +55,21 @@ export function Controls() {
           </button>
         );
       })}
-    </div>
+
+      {Object.entries(controls).map(([id, desc]) => {
+        return (
+          <button
+            className={styles.btn}
+            onClick={
+              id == "F" ? () => setShowFretboard((currentState: boolean) => !currentState) : () => console.log("temp")
+            }
+            title={desc}
+            key={id}
+          >
+            {id}
+          </button>
+        );
+      })}
+    </>
   );
 }

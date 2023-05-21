@@ -5,8 +5,7 @@
   padding: 1rem;
   gap: 1rem;
   font-family: monospace;
-  border: 1px solid lightgray;
-  box-shadow: 0 0 1px gray;
+  box-shadow: 0 0 2px gray;
   background-color: white;
 }
 

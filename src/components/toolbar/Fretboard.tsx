@@ -110,14 +110,16 @@ export function Fretboard() {
   }, [dimension]);
 
   return (
-    <div className={styles.root} ref={ref}>
-      <svg className={styles.wrapper}>
-        <rect className={styles.wood} />
-        {frets}
-        {markers}
-        {strings}
-      </svg>
-      <Notes fretWidth={fretWidth} frets={frets} />
+    <div className={styles.root}>
+      <div className={styles.wrapper} ref={ref}>
+        <svg className={styles.board}>
+          <rect className={styles.wood} />
+          {frets}
+          {markers}
+          {strings}
+        </svg>
+        <Notes fretWidth={fretWidth} frets={frets} />
+      </div>
     </div>
   );
 }

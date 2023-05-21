@@ -15,8 +15,8 @@ export function useResize(ref: React.RefObject<HTMLElement>) {
     const handleResize = () => {
       if (ref.current) {
         setDimension({
-          width: ref.current.offsetWidth,
-          height: ref.current.offsetHeight,
+          width: ref.current.clientWidth,
+          height: ref.current.clientHeight,
         });
       }
     };

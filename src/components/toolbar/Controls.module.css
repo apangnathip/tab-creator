@@ -1,14 +1,17 @@
-.root {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  flex: 1;
+.btn,
+.btnToggled {
+  width: 2rem;
+  height: 2rem;
+  background-color: transparent;
+  border: none;
+  border-radius: 5px;
 }
 
-.btn {
-  background-color: aliceblue;
+.btn:hover {
+  background-color: lightgray;
 }
 
-.btnActive {
-  background-color: green;
+.btn:active,
+.btnToggled {
+  background-color: rgb(187, 187, 187);
 }
