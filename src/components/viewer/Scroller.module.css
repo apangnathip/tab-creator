@@ -1,0 +1,16 @@
+.root {
+  position: absolute;
+  background-color: red;
+  opacity: 0.5;
+  width: 10px;
+  /* height: 100%; */
+}
+
+.doo {
+  position: absolute;
+}
+
+.scroller {
+  fill: red;
+  fill-opacity: 0.5;
+}

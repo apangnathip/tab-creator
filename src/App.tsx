@@ -7,7 +7,7 @@ import { Editor } from "./Editor";
 import "./styles.css";
 
 function App() {
-  const [showFretboard, setShowFretboard] = useState(false);
+  const [showFretboard, setShowFretboard] = useState(true);
   return (
     <>
       <BoardProvider>

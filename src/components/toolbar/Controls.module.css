@@ -2,16 +2,16 @@
 .btnToggled {
   width: 2rem;
   height: 2rem;
-  background-color: transparent;
+  background-color: white;
   border: none;
   border-radius: 5px;
 }
 
 .btn:hover {
-  background-color: lightgray;
+  filter: brightness(0.95);
 }
 
 .btn:active,
 .btnToggled {
-  background-color: rgb(187, 187, 187);
+  filter: brightness(0.85);
 }
