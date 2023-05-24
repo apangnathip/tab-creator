@@ -1,6 +1,6 @@
 import { useRef, useContext, useMemo } from "react";
 import { useResize } from "../../hooks/useResize";
-import { Board, BoardContext } from "../contexts/BoardContext";
+import { Board, BoardContext } from "../../contexts/BoardContext";
 import { Notes } from "./Notes";
 import styles from "./Fretboard.module.css";
 

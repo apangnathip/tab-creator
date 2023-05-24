@@ -1,6 +1,6 @@
 import { ReactElement, useContext } from "react";
-import { Board, BoardContext } from "../contexts/BoardContext";
-import { NotationContext } from "../contexts/NotationContext";
+import { Board, BoardContext } from "../../contexts/BoardContext";
+import { NotationContext } from "../../contexts/NotationContext";
 import styles from "./Notes.module.css";
 
 type NotesProps = {

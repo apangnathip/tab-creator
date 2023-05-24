@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { BoardContext } from "../contexts/BoardContext";
+import { BoardContext } from "../../contexts/BoardContext";
 import styles from "./Scroller.module.css";
 
 type ScrollerProps = {

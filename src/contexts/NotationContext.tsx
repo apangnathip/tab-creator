@@ -1,5 +1,5 @@
 import { Dispatch, ReactNode, SetStateAction, createContext, useReducer, useState } from "react";
-import { techniques } from "../toolbar";
+import { techniques } from "../components/toolbar";
 
 interface NotationContext {
   notation: string;

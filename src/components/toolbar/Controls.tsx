@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useContext } from "react";
-import { NotationContext } from "../contexts/NotationContext";
+import { NotationContext } from "../../contexts/NotationContext";
+import { ThemeContext } from "../../contexts/ThemeContext";
 import styles from "./Controls.module.css";
-import { ThemeContext } from "../contexts/ThemeContext";
 
 type ControlsProps = {
   maxChar: number;

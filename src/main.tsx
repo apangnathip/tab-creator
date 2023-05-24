@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
-import { ThemeProvider } from "./components/contexts/ThemeContext.js";
+import { ThemeProvider } from "./contexts/ThemeContext.js";
 
 const rootElement = document.getElementById("root");
 

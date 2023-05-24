@@ -1,7 +1,7 @@
-import { Dispatch, SetStateAction, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react";
 import { useResize } from "../../hooks/useResize";
-import { Board, BoardContext } from "../contexts/BoardContext";
-import { NotationContext } from "../contexts/NotationContext";
+import { Board, BoardContext } from "../../contexts/BoardContext";
+import { NotationContext } from "../../contexts/NotationContext";
 import { Scroller } from "./Scroller";
 import styles from "./Tabsheet.module.css";
 
