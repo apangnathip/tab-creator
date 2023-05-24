@@ -8,17 +8,20 @@ import "./styles.css";
 
 function App() {
   const [showFretboard, setShowFretboard] = useState(true);
+  const [scrollPos, setScrollPos] = useState({ x: 0, y: 0, max: 0 });
+  const [maxChar, setMaxChar] = useState(0);
+
   return (
     <>
       <BoardProvider>
         <NotationProvider>
           <Editor>
             <Toolbar>
-              <Controls setShowFretboard={setShowFretboard} />
+              <Controls maxChar={maxChar} setScrollPos={setScrollPos} setShowFretboard={setShowFretboard} />
             </Toolbar>
             {showFretboard && <Fretboard />}
             <Viewer>
-              <Tabsheet />
+              <Tabsheet maxChar={maxChar} setMaxChar={setMaxChar} scrollPos={scrollPos} setScrollPos={setScrollPos} />
             </Viewer>
           </Editor>
         </NotationProvider>

@@ -6,55 +6,67 @@ interface NotationContext {
   technique: string;
   addNotation: (noteInfo: { string: number; fret: number }) => void;
   setTechnique: React.Dispatch<React.SetStateAction<string>>;
+  lock: boolean;
+  setLock: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const NotationContext = createContext({} as NotationContext);
 
-function reducer(state: string, action: { string: number; fret: number; technique: string }) {
-  const { string, fret, technique } = action;
+function reducer(state: string, action: { string: number; fret: number; attribute: [string, boolean] }) {
+  const { string, fret, attribute } = action;
+  const [technique, lock] = attribute;
   const mode = technique ? techniques[technique].mode : null;
   const lastAction = state.split(",").at(-1)!;
   const lastString = parseInt(lastAction.charAt(0));
-  // const lastFret = parseInt(lastAction.split(/[A-Za-z]/).at(-1)!);
+  const suffix = lock ? "-" : ",";
+  let currState = state;
+  let newState = "";
+
+  if (!lock && state.slice(-1) == "-") {
+    currState = state.slice(0, -1) + ",";
+  }
+
   switch (mode) {
     case "stack":
       if (lastString == string + 1) {
-        return `${state}${technique}${fret}`;
+        newState = `${technique}${fret}`;
+        break;
       }
-      return `${state},${string + 1}:${technique}${fret}`;
-    // case "slide":
-    //   if (lastString == string + 1) {
-    //     const direction = fret > lastFret ? "/" : "\\";
-    //     console.log(lastFret);
-    //     return `${state}${direction}${fret}`;
-    //   }
-    //   return state;
+      newState = `${string + 1}:${technique}${fret}${suffix}`;
+      break;
     case "higher":
       console.log("NOT IMPLEMENTED");
-      return state;
-    case "chord":
-      console.log("NOT IMPLEMENTED");
-      return state;
+      break;
     case "external":
       console.log("NOT IMPLEMENTED");
-      return state;
+      break;
     case "unrestrict":
     default:
-      return `${state},${string + 1}:${fret}${technique}`;
+      newState = `${string + 1}:${fret}${technique}${suffix}`;
   }
+
+  if (lock) {
+    const states = currState.split(",");
+    const lastState = states[states.length - 1].split("-");
+    const duplicatesRemoved = lastState.filter((note) => note.charAt(0) != (string + 1).toString());
+    states.pop();
+    currState = states.join(",") + "," + duplicatesRemoved.join("-");
+  }
+  return currState + newState;
 }
 
 export function NotationProvider({ children }: { children: React.ReactNode }) {
   const [notation, dispatch] = useReducer(reducer, "");
   const [technique, setTechnique] = useState("");
+  const [lock, setLock] = useState(false);
 
   const addNotation = (noteInfo: { string: number; fret: number }) => {
-    dispatch({ ...noteInfo, technique });
+    dispatch({ ...noteInfo, attribute: [technique, lock] });
     setTechnique("");
   };
 
   return (
-    <NotationContext.Provider value={{ notation, addNotation, technique, setTechnique }}>
+    <NotationContext.Provider value={{ notation, addNotation, technique, setTechnique, lock, setLock }}>
       {children}
     </NotationContext.Provider>
   );

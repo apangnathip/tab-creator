@@ -1,54 +1,80 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useResize } from "../../hooks/useResize";
 import { Board, BoardContext } from "../contexts/BoardContext";
 import { NotationContext } from "../contexts/NotationContext";
 import { Scroller } from "./Scroller";
 import styles from "./Tabsheet.module.css";
 
-function translateNotation(maxChar: number, board: Board, notation: string): any[] {
+type TabsheetProps = {
+  maxChar: number;
+  scrollPos: { x: number; y: number; max: number };
+  setMaxChar: React.Dispatch<React.SetStateAction<number>>;
+  setScrollPos: React.Dispatch<React.SetStateAction<{ x: number; y: number; max: number }>>;
+};
+
+function translateNotation(maxChar: number, lock: boolean, board: Board, notation: string): any[] {
   const rest = "-";
   const notes = notation ? notation.split(",") : [];
   const staffs = [];
   const border = Array(board.stringCount).fill("|");
   let lines = border.slice();
 
-  for (let i = 1; i < notes.length; i++) {
+  if (!notes[notes.length - 1]) {
+    notes.pop();
+  }
+
+  for (let i = 0; i < notes.length; i++) {
+    if (!notes[i]) {
+      continue;
+    }
+
     if (lines[0].length + 4 >= maxChar) {
-      console.log(lines[0].length, maxChar);
       lines = lines.map((line) => line + "-".repeat(Math.abs(maxChar - line.length - 1)) + "|");
       staffs.push(lines);
       lines = border.slice();
     }
 
-    const [string, fret] = notes[i].split(":");
-    for (let j = 0; j < board.stringCount; j++) {
-      lines[j] += rest;
-      lines[j] += j == parseInt(string) - 1 ? fret : "-".repeat(fret.length);
+    const concurrentNotes = notes[i].split("-");
+    if (concurrentNotes.length > 1) {
+      for (let j = 0; j < concurrentNotes.length; j++) {
+        const [string, fret] = concurrentNotes[j].split(":");
+        lines[parseInt(string) - 1] += rest + fret;
+      }
+    } else {
+      const [string, fret] = notes[i].split(":");
+      lines[parseInt(string) - 1] += rest + fret;
+    }
+
+    const longestLine = lines.reduce((a, b) => (a.length > b.length ? a : b));
+    for (let j = 0; j < lines.length; j++) {
+      lines[j] += rest.repeat(longestLine.length - lines[j].length);
     }
   }
 
-  const currNotePos = lines[0].length;
+  const currNotePos = { x: lines[0].length, y: staffs.length, max: staffs.length };
   lines = lines.map((line) => line + "-".repeat(Math.abs(maxChar - line.length - 1)) + "|");
   staffs.push(lines);
   return [staffs, currNotePos];
 }
 
-export function Tabsheet() {
+export function Tabsheet({ maxChar, setMaxChar, scrollPos, setScrollPos }: TabsheetProps) {
   const { board } = useContext(BoardContext);
-  const { notation } = useContext(NotationContext);
+  const { notation, lock } = useContext(NotationContext);
   const [asciiTab, setAsciiTab] = useState([[]] as string[][]);
-  const [scrollPos, setScrollPos] = useState(0);
   const divRef = useRef<HTMLDivElement | null>(null);
   const containerWidth = useResize(divRef).width;
   const fontRef = useRef<HTMLSpanElement | null>(null);
   const { width, height } = fontRef.current ? fontRef.current.getBoundingClientRect() : { width: 1, height: 1 };
 
   useEffect(() => {
-    const maxChar = Math.floor((containerWidth - 16 * 2) / width);
-    const [staffs, currNotePos] = translateNotation(maxChar, board, notation);
+    setMaxChar(Math.floor((containerWidth - 16 * 2) / width));
+  }, [containerWidth]);
+
+  useEffect(() => {
+    const [staffs, currNotePos] = translateNotation(maxChar, lock, board, notation);
     setAsciiTab(staffs);
     setScrollPos(currNotePos);
-  }, [notation, containerWidth]);
+  }, [notation, maxChar]);
 
   return (
     <>
@@ -56,7 +82,7 @@ export function Tabsheet() {
         {asciiTab.map((staff, i) => {
           return (
             <div className={styles.staff} key={i}>
-              {i == asciiTab.length - 1 && <Scroller fontSize={{ width, height }} scrollPos={scrollPos} />}
+              {i == scrollPos.y && <Scroller fontSize={{ width, height }} scrollPos={scrollPos} />}
               {staff.map((line, j) => (
                 <p className={styles.tabLine} key={j}>
                   {line}

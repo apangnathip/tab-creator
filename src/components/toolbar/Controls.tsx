@@ -3,12 +3,13 @@ import { NotationContext } from "../contexts/NotationContext";
 import styles from "./Controls.module.css";
 
 type ControlsProps = {
+  maxChar: number;
+  setScrollPos: React.Dispatch<React.SetStateAction<{ x: number; y: number; max: number }>>;
   setShowFretboard: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-type Mode = "unrestrict" | "stack" | "higher" | "external";
+type Mode = "new" | "unrestrict" | "stack" | "higher" | "external";
 type TechniqueList = { [id: string]: Technique };
-type ControlList = { [id: string]: string };
 
 class Technique {
   desc: string;
@@ -31,19 +32,11 @@ export const techniques: TechniqueList = {
   "\\": new Technique("Slide Down", "stack"),
 };
 
-const controls: ControlList = {
-  "<": "Move Left",
-  ">": "Move Right",
-  F: "Fretboard",
-};
-
-export function Controls({ setShowFretboard }: ControlsProps) {
-  const { technique, setTechnique } = useContext(NotationContext);
+export function Controls({ maxChar, setScrollPos, setShowFretboard }: ControlsProps) {
+  const { technique, setTechnique, lock, setLock } = useContext(NotationContext);
   return (
     <>
       {Object.entries(techniques).map(([id, tech]) => {
-        if (technique === id) {
-        }
         return (
           <button
             className={technique == id ? styles.btnToggled : styles.btn}
@@ -56,20 +49,74 @@ export function Controls({ setShowFretboard }: ControlsProps) {
         );
       })}
 
-      {Object.entries(controls).map(([id, desc]) => {
-        return (
-          <button
-            className={styles.btn}
-            onClick={
-              id == "F" ? () => setShowFretboard((currentState: boolean) => !currentState) : () => console.log("temp")
+      <button
+        className={lock ? styles.btnToggled : styles.btn}
+        onClick={() => {
+          setLock((currentState) => !currentState);
+        }}
+      >
+        lock
+      </button>
+
+      <button
+        className={styles.btn}
+        onClick={() =>
+          setScrollPos(({ x, y, max }) => {
+            if (x! > 0) {
+              return { x: --x, y: y, max: max };
             }
-            title={desc}
-            key={id}
-          >
-            {id}
-          </button>
-        );
-      })}
+            return { x: x, y: y, max: max };
+          })
+        }
+      >
+        {"<"}
+      </button>
+
+      <button
+        className={styles.btn}
+        onClick={() =>
+          setScrollPos(({ x, y, max }) => {
+            if (x! < maxChar - 3) {
+              return { x: ++x, y: y, max: max };
+            }
+            return { x: x, y: y, max: max };
+          })
+        }
+      >
+        {">"}
+      </button>
+
+      <button
+        className={styles.btn}
+        onClick={() =>
+          setScrollPos(({ x, y, max }) => {
+            if (y > 0) {
+              return { x: x, y: --y, max: max };
+            }
+            return { x: x, y: y, max: max };
+          })
+        }
+      >
+        {"up"}
+      </button>
+
+      <button
+        className={styles.btn}
+        onClick={() =>
+          setScrollPos(({ x, y, max }) => {
+            if (y < max) {
+              return { x: x, y: ++y, max: max };
+            }
+            return { x: x, y: y, max: max };
+          })
+        }
+      >
+        {"down"}
+      </button>
+
+      <button className={styles.btn} onClick={() => setShowFretboard((currentState) => !currentState)}>
+        {"F"}
+      </button>
     </>
   );
 }
