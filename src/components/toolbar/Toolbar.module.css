@@ -4,6 +4,6 @@
   position: sticky;
   top: 0;
   padding: 5px;
-  background-color: white;
+  background-color: var(--colour-bg);
   box-shadow: 0 0 2px gray;
 }

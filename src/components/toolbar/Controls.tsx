@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useContext } from "react";
 import { NotationContext } from "../contexts/NotationContext";
 import styles from "./Controls.module.css";
+import { ThemeContext } from "../contexts/ThemeContext";
 
 type ControlsProps = {
   maxChar: number;
@@ -34,6 +35,8 @@ export const techniques: TechniqueList = {
 
 export function Controls({ maxChar, setScrollPos, setShowFretboard }: ControlsProps) {
   const { technique, setTechnique, lock, setLock } = useContext(NotationContext);
+  const { theme, toggleTheme } = useContext(ThemeContext);
+
   return (
     <>
       {Object.entries(techniques).map(([id, tech]) => {
@@ -116,6 +119,10 @@ export function Controls({ maxChar, setScrollPos, setShowFretboard }: ControlsPr
 
       <button className={styles.btn} onClick={() => setShowFretboard((currentState) => !currentState)}>
         {"F"}
+      </button>
+
+      <button className={styles.btn} onClick={() => toggleTheme()}>
+        {theme}
       </button>
     </>
   );

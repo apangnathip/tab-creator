@@ -2,9 +2,10 @@
 .btnToggled {
   width: 2rem;
   height: 2rem;
-  background-color: white;
   border: none;
   border-radius: 5px;
+  background-color: var(--colour-bg);
+  color: var(--colour-font);
 }
 
 .btn:hover {

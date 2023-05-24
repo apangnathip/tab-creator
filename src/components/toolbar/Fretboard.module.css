@@ -2,6 +2,7 @@
   position: sticky;
   padding: 1rem;
   box-shadow: inset 0 0 2px gray;
+  background-color: var(--colour-bg);
 }
 
 .wrapper {
@@ -17,17 +18,21 @@
 .wood {
   height: 100%;
   width: 100%;
-  fill: #202020;
+  fill: var(--colour-wood);
 }
 
 .nut {
-  fill: beige;
+  fill: var(--colour-nut);
 }
 
 .fret {
-  fill: grey;
+  fill: var(--colour-fret);
 }
 
 .marker {
-  fill: white;
+  fill: var(--colour-marker);
+}
+
+.string {
+  fill: var(--colour-string);
 }

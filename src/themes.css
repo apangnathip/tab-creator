@@ -1,0 +1,49 @@
+:root {
+  --font-light: black;
+  --bg-light: white;
+  --document-light: white;
+  --primary-light: grey;
+  --accent-light: red;
+
+  --font-dark: white;
+  --bg-dark: #10171f;
+  --document-dark: #000103;
+  --primary-dark: #003767;
+  --accent-dark: #f1c095;
+
+  --board-wood-dark: #202020;
+  --board-marker-dark: white;
+  --board-fret-dark: gray;
+
+  --board-wood-light: #e69b40;
+  --board-marker-light: #2f2f2f;
+  --board-fret-light: #b0b0b0;
+}
+
+.light,
+.dark {
+  --colour-nut: #ffffd9;
+  --colour-string: white;
+}
+
+.light {
+  --colour-font: var(--font-light);
+  --colour-bg: var(--bg-light);
+  --colour-doc: var(--document-light);
+  --colour-primary: var(--primary-light);
+  --colour-accent: var(--accent-light);
+  --colour-wood: var(--board-wood-light);
+  --colour-fret: var(--board-fret-light);
+  --colour-marker: var(--board-marker-light);
+}
+
+.dark {
+  --colour-font: var(--font-dark);
+  --colour-bg: var(--bg-dark);
+  --colour-doc: var(--document-dark);
+  --colour-primary: var(--primary-dark);
+  --colour-accent: var(--accent-dark);
+  --colour-wood: var(--board-wood-dark);
+  --colour-fret: var(--board-fret-dark);
+  --colour-marker: var(--board-marker-dark);
+}

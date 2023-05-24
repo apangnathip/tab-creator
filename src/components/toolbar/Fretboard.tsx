@@ -88,10 +88,10 @@ function createStrings(dimension: Dimension, board: Board) {
   for (let i = 0; i < stringCount; i++) {
     strings.push(
       <rect
+        className={styles.string}
         y={stringSpacing * (i + 0.5) - stringWidth[i] * 0.5}
         width={width}
         height={stringWidth[i]}
-        fill="white"
         key={i}
       />
     );
