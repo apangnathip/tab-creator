@@ -4,7 +4,7 @@ import { NotationProvider } from "./components/contexts/NotationContext";
 import { Controls, Fretboard, Toolbar } from "./components/toolbar";
 import { Viewer, Tabsheet } from "./components/viewer";
 import { Editor } from "./Editor";
-import "./styles.css";
+import "./App.css";
 
 function App() {
   const [showFretboard, setShowFretboard] = useState(true);

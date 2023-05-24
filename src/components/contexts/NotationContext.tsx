@@ -1,13 +1,13 @@
-import { createContext, useReducer, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, createContext, useReducer, useState } from "react";
 import { techniques } from "../toolbar";
 
 interface NotationContext {
   notation: string;
   technique: string;
-  addNotation: (noteInfo: { string: number; fret: number }) => void;
-  setTechnique: React.Dispatch<React.SetStateAction<string>>;
   lock: boolean;
-  setLock: React.Dispatch<React.SetStateAction<boolean>>;
+  setTechnique: Dispatch<SetStateAction<string>>;
+  setLock: Dispatch<SetStateAction<boolean>>;
+  addNotation: (noteInfo: { string: number; fret: number }) => void;
 }
 
 export const NotationContext = createContext({} as NotationContext);
@@ -55,7 +55,7 @@ function reducer(state: string, action: { string: number; fret: number; attribut
   return currState + newState;
 }
 
-export function NotationProvider({ children }: { children: React.ReactNode }) {
+export function NotationProvider({ children }: { children: ReactNode }) {
   const [notation, dispatch] = useReducer(reducer, "");
   const [technique, setTechnique] = useState("");
   const [lock, setLock] = useState(false);

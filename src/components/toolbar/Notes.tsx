@@ -1,14 +1,14 @@
-import { useContext } from "react";
+import { ReactElement, useContext } from "react";
 import { Board, BoardContext } from "../contexts/BoardContext";
 import { NotationContext } from "../contexts/NotationContext";
 import styles from "./Notes.module.css";
 
 type NotesProps = {
-  frets: JSX.Element[];
+  frets: ReactElement[];
   fretWidth: number;
 };
 
-const tuningNotes: { [tuning: string]: Array<string> } = {
+const tuningNotes: { [tuning: string]: string[] } = {
   E: ["E4", "B3", "G3", "D3", "A2", "E2"],
   Eb: ["Eb4", "Bb3", "Gb3", "Db3", "Ab2", "Eb2"],
   "Drop-D": ["E4", "B3", "G3", "D3", "A2", "D2"],
@@ -38,7 +38,7 @@ function createNotes(
   addNotation: (note: { string: number; fret: number }) => void,
   boardProps: Board,
   fretWidth: number,
-  frets: Array<JSX.Element>
+  frets: ReactElement[]
 ) {
   const { fretCount, tuning, stringCount } = boardProps;
   const notes = [];

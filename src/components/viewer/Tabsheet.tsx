@@ -1,4 +1,4 @@
-import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useResize } from "../../hooks/useResize";
 import { Board, BoardContext } from "../contexts/BoardContext";
 import { NotationContext } from "../contexts/NotationContext";
@@ -8,11 +8,11 @@ import styles from "./Tabsheet.module.css";
 type TabsheetProps = {
   maxChar: number;
   scrollPos: { x: number; y: number; max: number };
-  setMaxChar: React.Dispatch<React.SetStateAction<number>>;
-  setScrollPos: React.Dispatch<React.SetStateAction<{ x: number; y: number; max: number }>>;
+  setMaxChar: Dispatch<SetStateAction<number>>;
+  setScrollPos: Dispatch<SetStateAction<{ x: number; y: number; max: number }>>;
 };
 
-function translateNotation(maxChar: number, lock: boolean, board: Board, notation: string): any[] {
+function translateNotation(maxChar: number, board: Board, notation: string): any[] {
   const rest = "-";
   const notes = notation ? notation.split(",") : [];
   const staffs = [];
@@ -59,7 +59,7 @@ function translateNotation(maxChar: number, lock: boolean, board: Board, notatio
 
 export function Tabsheet({ maxChar, setMaxChar, scrollPos, setScrollPos }: TabsheetProps) {
   const { board } = useContext(BoardContext);
-  const { notation, lock } = useContext(NotationContext);
+  const { notation } = useContext(NotationContext);
   const [asciiTab, setAsciiTab] = useState([[]] as string[][]);
   const divRef = useRef<HTMLDivElement | null>(null);
   const containerWidth = useResize(divRef).width;
@@ -71,7 +71,7 @@ export function Tabsheet({ maxChar, setMaxChar, scrollPos, setScrollPos }: Tabsh
   }, [containerWidth]);
 
   useEffect(() => {
-    const [staffs, currNotePos] = translateNotation(maxChar, lock, board, notation);
+    const [staffs, currNotePos] = translateNotation(maxChar, board, notation);
     setAsciiTab(staffs);
     setScrollPos(currNotePos);
   }, [notation, maxChar]);

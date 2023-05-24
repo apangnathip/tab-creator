@@ -1,6 +1,15 @@
+@import "../../themes.css";
+
 .root {
   height: 100%;
   padding: 1rem;
   overflow-y: scroll;
-  background-color: white;
+}
+
+#dark .root {
+  background-color: var(--colour-bg);
+}
+
+#light .root {
+  background-color: ;
 }

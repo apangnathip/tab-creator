@@ -1,11 +1,11 @@
-import { useContext } from "react";
+import { Dispatch, SetStateAction, useContext } from "react";
 import { NotationContext } from "../contexts/NotationContext";
 import styles from "./Controls.module.css";
 
 type ControlsProps = {
   maxChar: number;
-  setScrollPos: React.Dispatch<React.SetStateAction<{ x: number; y: number; max: number }>>;
-  setShowFretboard: React.Dispatch<React.SetStateAction<boolean>>;
+  setScrollPos: Dispatch<SetStateAction<{ x: number; y: number; max: number }>>;
+  setShowFretboard: Dispatch<SetStateAction<boolean>>;
 };
 
 type Mode = "new" | "unrestrict" | "stack" | "higher" | "external";

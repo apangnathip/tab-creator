@@ -1,19 +1,19 @@
-import { createContext, useState } from "react";
+import { ReactNode, createContext, useState } from "react";
 
-export interface Board {
+export type Board = {
   stringCount: number;
   fretCount: number;
   tuning: string;
-}
+};
 
-interface BoardContext {
+type BoardContext = {
   board: Board;
   changeTuning: (newTuning: string) => void;
-}
+};
 
 export const BoardContext = createContext({} as BoardContext);
 
-export function BoardProvider({ children }: { children: React.ReactNode }) {
+export function BoardProvider({ children }: { children: ReactNode }) {
   const [board, setBoard] = useState({
     stringCount: 6,
     fretCount: 24,
@@ -24,9 +24,5 @@ export function BoardProvider({ children }: { children: React.ReactNode }) {
     setBoard((currentBoard) => ({ ...currentBoard, tuning: newTuning }));
   };
 
-  return (
-    <BoardContext.Provider value={{ board, changeTuning }}>
-      {children}
-    </BoardContext.Provider>
-  );
+  return <BoardContext.Provider value={{ board, changeTuning }}>{children}</BoardContext.Provider>;
 }
