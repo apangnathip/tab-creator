@@ -3,9 +3,9 @@ import { useResize } from "../../hooks/useResize";
 import { Board, BoardContext } from "../../contexts/BoardContext";
 import { NotationContext } from "../../contexts/NotationContext";
 import { Scroller } from "./Scroller";
-import styles from "./Tabsheet.module.css";
+import styles from "./Staff.module.css";
 
-type TabsheetProps = {
+type StaffProps = {
   maxChar: number;
   scrollPos: { x: number; y: number; max: number };
   setMaxChar: Dispatch<SetStateAction<number>>;
@@ -57,17 +57,17 @@ function translateNotation(maxChar: number, board: Board, notation: string): any
   return [staffs, currNotePos];
 }
 
-export function Tabsheet({ maxChar, setMaxChar, scrollPos, setScrollPos }: TabsheetProps) {
+export function Staff({ maxChar, setMaxChar, scrollPos, setScrollPos }: StaffProps) {
   const { board } = useContext(BoardContext);
   const { notation } = useContext(NotationContext);
   const [asciiTab, setAsciiTab] = useState([[]] as string[][]);
   const divRef = useRef<HTMLDivElement | null>(null);
-  const containerWidth = useResize(divRef).width;
+  const containerWidth = useResize(divRef)[0];
   const fontRef = useRef<HTMLSpanElement | null>(null);
   const { width, height } = fontRef.current ? fontRef.current.getBoundingClientRect() : { width: 1, height: 1 };
 
   useEffect(() => {
-    setMaxChar(Math.floor((containerWidth - 16 * 2) / width));
+    setMaxChar(Math.floor(containerWidth / width));
   }, [containerWidth]);
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export function Tabsheet({ maxChar, setMaxChar, scrollPos, setScrollPos }: Tabsh
         {asciiTab.map((staff, i) => {
           return (
             <div className={styles.staff} key={i}>
-              {i == scrollPos.y && <Scroller fontSize={{ width, height }} scrollPos={scrollPos} />}
+              {i === scrollPos.y && <Scroller fontSize={{ width, height }} scrollPos={scrollPos} />}
               {staff.map((line, j) => (
                 <p className={styles.tabLine} key={j}>
                   {line}

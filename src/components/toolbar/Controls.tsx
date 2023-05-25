@@ -6,10 +6,9 @@ import styles from "./Controls.module.css";
 type ControlsProps = {
   maxChar: number;
   setScrollPos: Dispatch<SetStateAction<{ x: number; y: number; max: number }>>;
-  setShowFretboard: Dispatch<SetStateAction<boolean>>;
 };
 
-type Mode = "new" | "unrestrict" | "stack" | "higher" | "external";
+type Mode = "unrestrict" | "stack";
 type TechniqueList = { [id: string]: Technique };
 
 class Technique {
@@ -25,15 +24,14 @@ class Technique {
 export const techniques: TechniqueList = {
   h: new Technique("Hammer-on", "stack"),
   p: new Technique("Pull-off", "stack"),
-  b: new Technique("Bend", "higher"),
+  b: new Technique("Bend", "stack"),
   r: new Technique("Release", "stack"),
-  t: new Technique("Tap", "external"),
   "~": new Technique("Vibrato", "unrestrict"),
   "/": new Technique("Slide Up", "stack"),
   "\\": new Technique("Slide Down", "stack"),
 };
 
-export function Controls({ maxChar, setScrollPos, setShowFretboard }: ControlsProps) {
+export function Controls({ maxChar, setScrollPos }: ControlsProps) {
   const { technique, setTechnique, lock, setLock } = useContext(NotationContext);
   const { theme, toggleTheme } = useContext(ThemeContext);
 
@@ -42,7 +40,7 @@ export function Controls({ maxChar, setScrollPos, setShowFretboard }: ControlsPr
       {Object.entries(techniques).map(([id, tech]) => {
         return (
           <button
-            className={technique == id ? styles.btnToggled : styles.btn}
+            className={technique === id ? styles.btnToggled : styles.btn}
             onClick={() => setTechnique(id)}
             title={tech.desc}
             key={id}
@@ -64,11 +62,11 @@ export function Controls({ maxChar, setScrollPos, setShowFretboard }: ControlsPr
       <button
         className={styles.btn}
         onClick={() =>
-          setScrollPos(({ x, y, max }) => {
+          setScrollPos(({ x, ...other }) => {
             if (x! > 0) {
-              return { x: --x, y: y, max: max };
+              return { x: --x, ...other };
             }
-            return { x: x, y: y, max: max };
+            return { x: x, ...other };
           })
         }
       >
@@ -78,11 +76,11 @@ export function Controls({ maxChar, setScrollPos, setShowFretboard }: ControlsPr
       <button
         className={styles.btn}
         onClick={() =>
-          setScrollPos(({ x, y, max }) => {
+          setScrollPos(({ x, ...other }) => {
             if (x! < maxChar - 3) {
-              return { x: ++x, y: y, max: max };
+              return { x: ++x, ...other };
             }
-            return { x: x, y: y, max: max };
+            return { x: x, ...other };
           })
         }
       >
@@ -92,11 +90,11 @@ export function Controls({ maxChar, setScrollPos, setShowFretboard }: ControlsPr
       <button
         className={styles.btn}
         onClick={() =>
-          setScrollPos(({ x, y, max }) => {
+          setScrollPos(({ y, ...other }) => {
             if (y > 0) {
-              return { x: x, y: --y, max: max };
+              return { y: --y, ...other };
             }
-            return { x: x, y: y, max: max };
+            return { y: y, ...other };
           })
         }
       >
@@ -106,19 +104,15 @@ export function Controls({ maxChar, setScrollPos, setShowFretboard }: ControlsPr
       <button
         className={styles.btn}
         onClick={() =>
-          setScrollPos(({ x, y, max }) => {
+          setScrollPos(({ y, max, ...other }) => {
             if (y < max) {
-              return { x: x, y: ++y, max: max };
+              return { y: ++y, max: max, ...other };
             }
-            return { x: x, y: y, max: max };
+            return { y: y, max: max, ...other };
           })
         }
       >
         {"down"}
-      </button>
-
-      <button className={styles.btn} onClick={() => setShowFretboard((currentState) => !currentState)}>
-        {"F"}
       </button>
 
       <button className={styles.btn} onClick={() => toggleTheme()}>

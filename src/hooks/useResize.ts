@@ -1,23 +1,14 @@
 import { useEffect, useState } from "react";
 
-type Dimension = {
-  width: number;
-  height: number;
-};
+export type Dimension = [number, number];
 
 export function useResize(ref: React.RefObject<HTMLElement>) {
-  const [dimension, setDimension] = useState({
-    width: 0,
-    height: 0,
-  } as Dimension);
+  const [dimension, setDimension] = useState([0, 0] satisfies Dimension);
 
   useEffect(() => {
     const handleResize = () => {
       if (ref.current) {
-        setDimension({
-          width: ref.current.clientWidth,
-          height: ref.current.clientHeight,
-        });
+        setDimension([ref.current.clientWidth, ref.current.clientHeight]);
       }
     };
 

@@ -16,9 +16,9 @@ function reducer(state: string, action: { string: number; fret: number; attribut
   const { string, fret, attribute } = action;
   const [technique, lock] = attribute;
   const mode = technique ? techniques[technique].mode : null;
-  const lastAction = state.split(",").at(-1)!;
-  const lastString = parseInt(lastAction.charAt(0));
-  const suffix = lock ? "-" : ",";
+  const lastAction = state.split(",").at(-2)!;
+  const lastString = lastAction ? parseInt(lastAction.charAt(0)) : "";
+  const connector = lock ? "-" : ",";
   let currState = state;
   let newState = "";
 
@@ -29,26 +29,20 @@ function reducer(state: string, action: { string: number; fret: number; attribut
   switch (mode) {
     case "stack":
       if (lastString == string + 1) {
-        newState = `${technique}${fret}`;
+        currState = currState.at(-1) === "," ? currState.slice(0, -1) : currState;
+        newState = `${technique}${fret}${connector}`;
         break;
       }
-      newState = `${string + 1}:${technique}${fret}${suffix}`;
-      break;
-    case "higher":
-      console.log("NOT IMPLEMENTED");
-      break;
-    case "external":
-      console.log("NOT IMPLEMENTED");
+      newState = `${string + 1}:${technique}${fret}${connector}`;
       break;
     case "unrestrict":
-    default:
-      newState = `${string + 1}:${fret}${technique}${suffix}`;
+      newState = `${string + 1}:${fret}${technique}${connector}`;
   }
 
   if (lock) {
     const states = currState.split(",");
     const lastState = states[states.length - 1].split("-");
-    const duplicatesRemoved = lastState.filter((note) => note.charAt(0) != (string + 1).toString());
+    const duplicatesRemoved = lastState.filter((note) => note.charAt(0) !== (string + 1).toString());
     states.pop();
     currState = states.join(",") + "," + duplicatesRemoved.join("-");
   }

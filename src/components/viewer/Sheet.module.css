@@ -1,0 +1,13 @@
+.root {
+  padding: 2rem;
+  font-family: monospace;
+  box-shadow: 0 0 2px gray;
+  color: var(--colour-font);
+  background-color: var(--colour-doc);
+}
+
+.title {
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  text-align: center;
+}

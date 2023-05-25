@@ -1,2 +1,2 @@
 export * from "./Viewer";
-export * from "./Tabsheet";
+export * from "./Staff";

@@ -2,12 +2,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 1rem;
   gap: 1rem;
-  font-family: monospace;
-  box-shadow: 0 0 2px gray;
-  color: var(--colour-font);
-  background-color: var(--colour-doc);
 }
 
 .staff .tabLine {

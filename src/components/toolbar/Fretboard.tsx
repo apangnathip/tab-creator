@@ -1,13 +1,8 @@
 import { useRef, useContext, useMemo } from "react";
-import { useResize } from "../../hooks/useResize";
+import { Dimension, useResize } from "../../hooks/useResize";
 import { Board, BoardContext } from "../../contexts/BoardContext";
 import { Notes } from "./Notes";
 import styles from "./Fretboard.module.css";
-
-type Dimension = {
-  width: number;
-  height: number;
-};
 
 const fretWidth = 2;
 const markerPos = new Set([3, 5, 7, 9, 12, 15, 17, 19, 21, 24]);
@@ -32,7 +27,7 @@ function getFretPos(width: number, board: Board) {
 }
 
 function createFrets(dimension: Dimension, board: Board) {
-  const { width, height } = dimension;
+  const [width, height] = dimension;
   const fretPos = getFretPos(width, board);
   const frets = fretPos.map((pos, i) => {
     return (
@@ -50,7 +45,7 @@ function createFrets(dimension: Dimension, board: Board) {
 }
 
 function createMarkers(dimension: Dimension, board: Board) {
-  const { width, height } = dimension;
+  const [width, height] = dimension;
   const { stringCount } = board;
   const markers = [];
   const markerSize = (height / stringCount) * 0.25;
@@ -79,7 +74,7 @@ function createMarkers(dimension: Dimension, board: Board) {
 }
 
 function createStrings(dimension: Dimension, board: Board) {
-  const { width, height } = dimension;
+  const [width, height] = dimension;
   const { stringCount } = board;
   const strings = [];
   const stringWidth = Array.from({ length: stringCount }, (_, i) => i / 3 + 1);

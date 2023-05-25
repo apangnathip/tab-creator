@@ -17,13 +17,13 @@ const tuningNotes: { [tuning: string]: string[] } = {
 function nextNote(currNote: string) {
   let octave = currNote.slice(-1);
 
-  if (currNote.charAt(0) == "B" && currNote.charAt(1) != "b") {
+  if (currNote.charAt(0) === "B" && currNote.charAt(1) !== "b") {
     octave = (parseInt(octave) + 1).toString();
   }
-  if (currNote.charAt(0) == "G" && currNote.charAt(1) != "b") {
+  if (currNote.charAt(0) === "G" && currNote.charAt(1) !== "b") {
     return "A" + "b" + octave;
   }
-  if (currNote.charAt(1) == "b") {
+  if (currNote.charAt(1) === "b") {
     return currNote.charAt(0) + octave;
   }
 
@@ -50,9 +50,9 @@ function createNotes(
 
     noteMemo.push([]);
 
-    if (fret == 0) {
+    if (fret === 0) {
       gapWidth += fretWidth * 2;
-    } else if (fret == 1) {
+    } else if (fret === 1) {
       gapWidth -= frets[fret - 1].props.x + fretWidth;
     } else {
       gapWidth -= frets[fret - 1].props.x;
