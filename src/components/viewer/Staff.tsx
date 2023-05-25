@@ -6,10 +6,10 @@ import { Scroller } from "./Scroller";
 import styles from "./Staff.module.css";
 
 type StaffProps = {
-  maxChar: number;
-  scrollPos: { x: number; y: number; max: number };
-  setMaxChar: Dispatch<SetStateAction<number>>;
-  setScrollPos: Dispatch<SetStateAction<{ x: number; y: number; max: number }>>;
+  limits: { char: number; staff: number };
+  scrollPos: { x: number; y: number };
+  setLimits: Dispatch<SetStateAction<{ char: number; staff: number }>>;
+  setScrollPos: Dispatch<SetStateAction<{ x: number; y: number }>>;
 };
 
 function translateNotation(maxChar: number, board: Board, notation: string): any[] {
@@ -51,13 +51,13 @@ function translateNotation(maxChar: number, board: Board, notation: string): any
     }
   }
 
-  const currNotePos = { x: lines[0].length, y: staffs.length, max: staffs.length };
+  const currNotePos = { x: lines[0].length, y: staffs.length };
   lines = lines.map((line) => line + "-".repeat(Math.abs(maxChar - line.length - 1)) + "|");
   staffs.push(lines);
   return [staffs, currNotePos];
 }
 
-export function Staff({ maxChar, setMaxChar, scrollPos, setScrollPos }: StaffProps) {
+export function Staff({ limits, setLimits, scrollPos, setScrollPos }: StaffProps) {
   const { board } = useContext(BoardContext);
   const { notation } = useContext(NotationContext);
   const [asciiTab, setAsciiTab] = useState([[]] as string[][]);
@@ -67,14 +67,15 @@ export function Staff({ maxChar, setMaxChar, scrollPos, setScrollPos }: StaffPro
   const { width, height } = fontRef.current ? fontRef.current.getBoundingClientRect() : { width: 1, height: 1 };
 
   useEffect(() => {
-    setMaxChar(Math.floor(containerWidth / width));
+    setLimits(({ staff }) => ({ char: Math.floor(containerWidth / width), staff: staff }));
   }, [containerWidth]);
 
   useEffect(() => {
-    const [staffs, currNotePos] = translateNotation(maxChar, board, notation);
+    const [staffs, currNotePos] = translateNotation(limits.char, board, notation);
     setAsciiTab(staffs);
     setScrollPos(currNotePos);
-  }, [notation, maxChar]);
+    setLimits(({ char }) => ({ staff: staffs.length - 1, char: char }));
+  }, [notation, limits.char]);
 
   return (
     <>

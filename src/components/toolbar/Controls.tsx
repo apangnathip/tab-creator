@@ -4,8 +4,8 @@ import { ThemeContext } from "../../contexts/ThemeContext";
 import styles from "./Controls.module.css";
 
 type ControlsProps = {
-  maxChar: number;
-  setScrollPos: Dispatch<SetStateAction<{ x: number; y: number; max: number }>>;
+  limits: { char: number; staff: number };
+  setScrollPos: Dispatch<SetStateAction<{ x: number; y: number }>>;
 };
 
 type Mode = "unrestrict" | "stack";
@@ -31,7 +31,7 @@ export const techniques: TechniqueList = {
   "\\": new Technique("Slide Down", "stack"),
 };
 
-export function Controls({ maxChar, setScrollPos }: ControlsProps) {
+export function Controls({ limits, setScrollPos }: ControlsProps) {
   const { technique, setTechnique, lock, setLock } = useContext(NotationContext);
   const { theme, toggleTheme } = useContext(ThemeContext);
 
@@ -62,11 +62,11 @@ export function Controls({ maxChar, setScrollPos }: ControlsProps) {
       <button
         className={styles.btn}
         onClick={() =>
-          setScrollPos(({ x, ...other }) => {
-            if (x! > 0) {
-              return { x: --x, ...other };
+          setScrollPos(({ x, y }) => {
+            if (x > 0) {
+              return { x: --x, y: y };
             }
-            return { x: x, ...other };
+            return { x: x, y: y };
           })
         }
       >
@@ -76,11 +76,11 @@ export function Controls({ maxChar, setScrollPos }: ControlsProps) {
       <button
         className={styles.btn}
         onClick={() =>
-          setScrollPos(({ x, ...other }) => {
-            if (x! < maxChar - 3) {
-              return { x: ++x, ...other };
+          setScrollPos(({ x, y }) => {
+            if (x < limits.char - 3) {
+              return { x: ++x, y: y };
             }
-            return { x: x, ...other };
+            return { x: x, y: y };
           })
         }
       >
@@ -90,11 +90,11 @@ export function Controls({ maxChar, setScrollPos }: ControlsProps) {
       <button
         className={styles.btn}
         onClick={() =>
-          setScrollPos(({ y, ...other }) => {
+          setScrollPos(({ x, y }) => {
             if (y > 0) {
-              return { y: --y, ...other };
+              return { x: x, y: --y };
             }
-            return { y: y, ...other };
+            return { x: x, y: y };
           })
         }
       >
@@ -104,11 +104,11 @@ export function Controls({ maxChar, setScrollPos }: ControlsProps) {
       <button
         className={styles.btn}
         onClick={() =>
-          setScrollPos(({ y, max, ...other }) => {
-            if (y < max) {
-              return { y: ++y, max: max, ...other };
+          setScrollPos(({ x, y }) => {
+            if (y < limits.staff) {
+              return { x: x, y: ++y };
             }
-            return { y: y, max: max, ...other };
+            return { x: x, y: y };
           })
         }
       >

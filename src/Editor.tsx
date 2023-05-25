@@ -5,18 +5,20 @@ import { Sheet } from "./components/viewer/Sheet";
 import styles from "./Editor.module.css";
 
 export function Editor() {
-  const [scrollPos, setScrollPos] = useState({ x: 0, y: 0, max: 0 });
-  const [maxChar, setMaxChar] = useState(0);
+  const [scrollPos, setScrollPos] = useState({ x: 0, y: 0 });
+  const [limits, setLimits] = useState({ char: 0, staff: 0 });
+
+  console.log(scrollPos);
 
   return (
     <div className={styles.root}>
       <Toolbar>
-        <Controls maxChar={maxChar} setScrollPos={setScrollPos} />
+        <Controls limits={limits} setScrollPos={setScrollPos} />
       </Toolbar>
       <Fretboard />
       <Viewer>
         <Sheet>
-          <Staff maxChar={maxChar} setMaxChar={setMaxChar} scrollPos={scrollPos} setScrollPos={setScrollPos} />
+          <Staff limits={limits} setLimits={setLimits} scrollPos={scrollPos} setScrollPos={setScrollPos} />
         </Sheet>
       </Viewer>
     </div>
