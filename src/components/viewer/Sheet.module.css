@@ -5,9 +5,3 @@
   color: var(--colour-font);
   background-color: var(--colour-doc);
 }
-
-.title {
-  margin-bottom: 1rem;
-  font-size: 2rem;
-  text-align: center;
-}

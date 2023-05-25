@@ -15,7 +15,7 @@ export const NotationContext = createContext({} as NotationContext);
 function reducer(state: string, action: { string: number; fret: number; attribute: [string, boolean] }) {
   const { string, fret, attribute } = action;
   const [technique, lock] = attribute;
-  const mode = technique ? techniques[technique].mode : null;
+  const mode = technique ? techniques[technique].mode : "unrestrict";
   const lastAction = state.split(",").at(-2)!;
   const lastString = lastAction ? parseInt(lastAction.charAt(0)) : "";
   const connector = lock ? "-" : ",";

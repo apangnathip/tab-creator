@@ -1,12 +1,11 @@
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import styles from "./Sheet.module.css";
+import { Header } from "./Header";
 
 export function Sheet({ children }: { children: ReactNode }) {
-  const [title, setTitle] = useState("Untitled");
-
   return (
     <div className={styles.root}>
-      <div className={styles.title}>{title}</div>
+      <Header />
       {children}
     </div>
   );
