@@ -1,101 +1,134 @@
 import { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react";
-import { useResize } from "../../hooks/useResize";
 import { Board, BoardContext } from "../../contexts/BoardContext";
 import { NotationContext } from "../../contexts/NotationContext";
-import { Scroller } from "./Scroller";
 import styles from "./Staff.module.css";
 
-type StaffProps = {
-  limits: { char: number; staff: number };
-  scrollPos: { x: number; y: number };
-  setLimits: Dispatch<SetStateAction<{ char: number; staff: number }>>;
-  setScrollPos: Dispatch<SetStateAction<{ x: number; y: number }>>;
-};
-
-function translateNotation(maxChar: number, board: Board, notation: string): any[] {
-  const rest = "-";
+function translateNotation(
+  board: Board,
+  notation: string,
+  charLimit: number,
+  setActive: Dispatch<SetStateAction<{ staff: number; line: number }>>
+) {
   const notes = notation ? notation.split(",") : [];
-  const staffs = [];
   const border = Array(board.stringCount).fill("|");
-  let lines = border.slice();
+  const empty = Array(board.stringCount).fill("-");
+  const staffs = [];
+  let staff = [border.slice()];
+  let staffLength = 1;
+  notes.pop();
 
-  if (!notes[notes.length - 1]) {
-    notes.pop();
-  }
+  for (const note of notes) {
+    const [string, fret] = note.split(":");
+    const stringIndex = parseInt(string) - 1;
+    const line = Array(board.stringCount).fill("-".repeat(fret ? fret.length : 1));
+    line[stringIndex] = fret;
+    staff.push(empty.slice(), line);
 
-  for (let i = 0; i < notes.length; i++) {
-    if (!notes[i]) {
-      continue;
+    staffLength = 0;
+    for (const line of staff) {
+      staffLength += line[0].length;
     }
 
-    if (lines[0].length + 4 >= maxChar) {
-      lines = lines.map((line) => line + "-".repeat(Math.abs(maxChar - line.length - 1)) + "|");
-      staffs.push(lines);
-      lines = border.slice();
-    }
+    if (staffLength > charLimit) {
+      const endLine = staff.pop() as string[];
+      const offset = charLimit - staffLength + endLine[0].length + 2;
+      staff.pop();
 
-    const concurrentNotes = notes[i].split("-");
-    if (concurrentNotes.length > 1) {
-      for (let j = 0; j < concurrentNotes.length; j++) {
-        const [string, fret] = concurrentNotes[j].split(":");
-        lines[parseInt(string) - 1] += rest + fret;
+      for (let i = 0; i < offset; i++) {
+        if (i === offset - 1) {
+          staff.push(border.slice());
+        } else {
+          staff.push(empty.slice());
+        }
       }
-    } else {
-      const [string, fret] = notes[i].split(":");
-      lines[parseInt(string) - 1] += rest + fret;
-    }
 
-    const longestLine = lines.reduce((a, b) => (a.length > b.length ? a : b));
-    for (let j = 0; j < lines.length; j++) {
-      lines[j] += rest.repeat(longestLine.length - lines[j].length);
+      staffs.push(staff);
+      staff = [border.slice(), empty.slice(), endLine];
+      staffLength = 2 + endLine[0].length;
     }
   }
 
-  const currNotePos = { x: lines[0].length, y: staffs.length };
-  lines = lines.map((line) => line + "-".repeat(Math.abs(maxChar - line.length - 1)) + "|");
-  staffs.push(lines);
-  return [staffs, currNotePos];
+  setActive({ staff: staffs.length, line: staff.length >= charLimit ? charLimit : staff.length + 1 });
+
+  for (let i = 0; i < charLimit - staffLength; i++) {
+    staff.push(empty.slice());
+  }
+
+  staff.push(border.slice());
+  staffs.push(staff);
+
+  return staffs;
 }
 
-export function Staff({ limits, setLimits, scrollPos, setScrollPos }: StaffProps) {
+function renderTab(
+  tab: string[][][],
+  active: { staff: number; line: number },
+  setActive: Dispatch<SetStateAction<{ staff: number; line: number }>>
+) {
+  const staffElements = [];
+
+  for (let i = 0; i < tab.length; i++) {
+    const staff = tab[i];
+    const lineElements = [];
+
+    for (let j = 0; j < staff.length; j++) {
+      const line = staff[j];
+      const noteElements = [];
+
+      for (let k = 0; k < line.length; k++) {
+        const note = line[k];
+        noteElements.push(
+          <div className={styles.note} key={k}>
+            {note}
+          </div>
+        );
+      }
+
+      lineElements.push(
+        <span
+          className={active.staff === i && active.line === j ? styles.lineActive : styles.line}
+          onClick={() => setActive({ staff: i, line: j })}
+          key={j}
+        >
+          {noteElements}
+        </span>
+      );
+    }
+
+    staffElements.push(
+      <div className={styles.staff} key={i}>
+        {lineElements}
+      </div>
+    );
+  }
+
+  return staffElements;
+}
+
+export function Staff() {
   const { board } = useContext(BoardContext);
   const { notation } = useContext(NotationContext);
-  const [asciiTab, setAsciiTab] = useState([[]] as string[][]);
-  const divRef = useRef<HTMLDivElement | null>(null);
-  const containerWidth = useResize(divRef)[0];
-  const fontRef = useRef<HTMLSpanElement | null>(null);
-  const { width, height } = fontRef.current ? fontRef.current.getBoundingClientRect() : { width: 1, height: 1 };
+  const [sheetSize, setSheetSize] = useState<[number, number]>([800, 1200]);
+  const [charLimit, setCharLimit] = useState(0);
+  const [tab, setTab] = useState([[[""]]]);
+  const [active, setActive] = useState({ staff: 0, line: 2 });
+  const fontRef = useRef<HTMLSpanElement>(null);
+  const fontSize = fontRef.current ? fontRef.current.clientWidth : 1;
 
   useEffect(() => {
-    setLimits(({ staff }) => ({ char: Math.floor(containerWidth / width), staff: staff }));
-  }, [containerWidth]);
+    setCharLimit(Math.round(sheetSize[0] / fontSize));
+  }, [sheetSize, fontSize]);
 
   useEffect(() => {
-    const [staffs, currNotePos] = translateNotation(limits.char, board, notation);
-    setAsciiTab(staffs);
-    setScrollPos(currNotePos);
-    setLimits(({ char }) => ({ staff: staffs.length - 1, char: char }));
-  }, [notation, limits.char]);
+    setTab(translateNotation(board, notation, charLimit, setActive));
+  }, [notation, charLimit]);
 
   return (
-    <>
-      <div className={styles.root} ref={divRef}>
-        {asciiTab.map((staff, i) => {
-          return (
-            <div className={styles.staff} key={i}>
-              {i === scrollPos.y && <Scroller fontSize={{ width, height }} scrollPos={scrollPos} />}
-              {staff.map((line, j) => (
-                <p className={styles.tabLine} key={j}>
-                  {line}
-                </p>
-              ))}
-            </div>
-          );
-        })}
-        <span ref={fontRef} className={styles.fontCalibrator}>
-          0
-        </span>
-      </div>
-    </>
+    <div className={styles.root} style={{ width: sheetSize[0], minHeight: sheetSize[1] }}>
+      {renderTab(tab, active, setActive)}
+      <span className={styles.fontCalibrator} ref={fontRef}>
+        x
+      </span>
+    </div>
   );
 }

@@ -27,6 +27,10 @@ function reducer(state: string, action: { string: number; fret: number; attribut
   }
 
   switch (mode) {
+    case "non-open":
+      if (fret === 0) {
+        break;
+      }
     case "stack":
       if (lastString == string + 1) {
         currState = currState.at(-1) === "," ? currState.slice(0, -1) : currState;
@@ -35,6 +39,7 @@ function reducer(state: string, action: { string: number; fret: number; attribut
       }
       newState = `${string + 1}:${technique}${fret}${connector}`;
       break;
+
     case "unrestrict":
       newState = `${string + 1}:${fret}${technique}${connector}`;
   }

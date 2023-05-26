@@ -1,25 +1,29 @@
 .root {
-  position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.staff .tabLine {
-  width: fit-content;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 1rem 0;
 }
 
 .staff {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 
-.tabLine {
-  white-space: nowrap;
+.line,
+.note {
+  cursor: pointer;
+  width: fit-content;
+}
+
+.lineActive {
+  background-color: var(--colour-accent);
+}
+.line:hover {
+  background-color: beige;
 }
 
 .fontCalibrator {
-  visibility: hidden;
   position: absolute;
-  width: fit-content;
+  visibility: hidden;
 }
