@@ -11,9 +11,7 @@ export function Header() {
         suppressContentEditableWarning={true}
         onBlur={(e) => {
           const newTitle = (e.target as HTMLElement).textContent;
-          if (newTitle) {
-            setTitle(newTitle);
-          }
+          if (newTitle) setTitle(newTitle);
         }}
       >
         {title}

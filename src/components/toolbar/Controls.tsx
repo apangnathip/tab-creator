@@ -47,9 +47,7 @@ export function Controls() {
 
       <button
         className={lock ? styles.btnToggled : styles.btn}
-        onClick={() => {
-          setLock((currentState) => !currentState);
-        }}
+        onClick={() => setLock((currentState) => !currentState)}
       >
         lock
       </button>

@@ -10,10 +10,13 @@
   flex-direction: row;
 }
 
-.line,
-.note {
+.line {
   cursor: pointer;
   width: fit-content;
+}
+
+.note {
+  user-select: none;
 }
 
 .lineActive {
