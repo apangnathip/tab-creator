@@ -3,27 +3,33 @@ import { techniques } from "../components/toolbar";
 
 interface NotationContext {
   notation: string;
-  technique: string;
-  lock: boolean;
-  setTechnique: Dispatch<SetStateAction<string>>;
-  setLock: Dispatch<SetStateAction<boolean>>;
   addNotation: (noteInfo: { string: number; fret: number }) => void;
+  technique: string;
+  setTechnique: Dispatch<SetStateAction<string>>;
+  active: number;
+  changeActive: (pos: number, type: "click" | "scroll") => void;
 }
 
 export const NotationContext = createContext({} as NotationContext);
 
-function reducer(state: string, action: { string: number; fret: number; attribute: [string, boolean] }) {
-  const { string, fret, attribute } = action;
-  const [technique, lock] = attribute;
-  const mode = technique ? techniques[technique].mode : "unrestrict";
-  const lastAction = state.split(",").at(-2)!;
-  const lastString = lastAction ? parseInt(lastAction.charAt(0)) : "";
-  const connector = lock ? "-" : ",";
-  let currState = state;
-  let newState = "";
+function modSplit(str: string | undefined, separator: string): string[] {
+  if (!str) return [];
+  return str.split(separator);
+}
 
-  if (!lock && state.slice(-1) == "-") {
-    currState = state.slice(0, -1) + ",";
+function reducer(state: string, action: { string: number; fret: number; attribute: [string, number] }) {
+  const { string, fret, attribute } = action;
+  const [technique, active] = attribute;
+  const mode = technique ? techniques[technique].mode : "unrestrict";
+  const notation = modSplit(state, ",");
+  let past = notation;
+  let next: string[] = [];
+  let curr: string[] = [];
+
+  if (active !== -1) {
+    past = notation.slice(0, active);
+    next = notation.slice(active + 1);
+    curr = modSplit(notation.at(active), "-");
   }
 
   switch (mode) {
@@ -32,40 +38,62 @@ function reducer(state: string, action: { string: number; fret: number; attribut
         break;
       }
     case "stack":
-      if (lastString == string + 1) {
-        currState = currState.at(-1) === "," ? currState.slice(0, -1) : currState;
-        newState = `${technique}${fret}${connector}`;
-        break;
+      let match = null;
+      for (let i = 0; i < curr.length; i++) {
+        const currString = modSplit(curr[i], ":")[0];
+        if (currString === string.toString()) {
+          match = i;
+          break;
+        }
       }
-      newState = `${string + 1}:${technique}${fret}${connector}`;
+
+      if (match != null) {
+        curr[match] += `${technique}${fret}`;
+      } else {
+        curr.push(`${string}:${technique}${fret}`);
+      }
       break;
-
     case "unrestrict":
-      newState = `${string + 1}:${fret}${technique}${connector}`;
+      curr = curr.filter((n) => n.split(":")[0] !== string.toString());
+      curr.push(`${string}:${fret}${technique}`);
   }
 
-  if (lock) {
-    const states = currState.split(",");
-    const lastState = states[states.length - 1].split("-");
-    const duplicatesRemoved = lastState.filter((note) => note.charAt(0) !== (string + 1).toString());
-    states.pop();
-    currState = states.join(",") + "," + duplicatesRemoved.join("-");
-  }
-  return currState + newState;
+  const joinedCurr = curr.join("-");
+  const combined = [];
+  combined.push(...past);
+  if (joinedCurr) combined.push(joinedCurr);
+  combined.push(...next);
+  return combined.join(",");
 }
 
 export function NotationProvider({ children }: { children: ReactNode }) {
   const [notation, dispatch] = useReducer(reducer, "");
   const [technique, setTechnique] = useState("");
   const [lock, setLock] = useState(false);
+  const [active, setActive] = useState(0);
 
   const addNotation = (noteInfo: { string: number; fret: number }) => {
-    dispatch({ ...noteInfo, attribute: [technique, lock] });
+    dispatch({ ...noteInfo, attribute: [technique, active] });
     setTechnique("");
   };
 
+  const changeActive = (pos: number, type: "scroll" | "click") => {
+    if (type === "click") {
+      setLock(true);
+      if (active === pos) {
+        setLock(false);
+      }
+    }
+
+    if (lock && type === "scroll") {
+      setActive((curr) => (curr === -1 && pos === -1 ? notation.split(",").length - 1 : curr));
+    } else {
+      setActive((curr) => (curr === pos ? -1 : pos));
+    }
+  };
+
   return (
-    <NotationContext.Provider value={{ notation, addNotation, technique, setTechnique, lock, setLock }}>
+    <NotationContext.Provider value={{ notation, addNotation, technique, setTechnique, active, changeActive }}>
       {children}
     </NotationContext.Provider>
   );

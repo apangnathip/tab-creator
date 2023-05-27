@@ -15,15 +15,24 @@
   width: fit-content;
 }
 
-.note {
-  user-select: none;
+.line:hover {
+  background-color: beige;
 }
 
 .lineActive {
   background-color: var(--colour-accent);
 }
-.line:hover {
-  background-color: beige;
+
+.lineActive:hover {
+  background-color: brown;
+}
+
+.current {
+  background-color: aquamarine;
+}
+
+.note {
+  user-select: none;
 }
 
 .fontCalibrator {

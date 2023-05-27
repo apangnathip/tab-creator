@@ -65,7 +65,7 @@ function createNotes(
       fretButtons.push(
         <div
           className={styles.button}
-          onClick={() => addNotation({ string: string, fret })}
+          onClick={() => addNotation({ string: string + 1, fret })}
           style={{ width: gapWidth }}
           key={string}
         >

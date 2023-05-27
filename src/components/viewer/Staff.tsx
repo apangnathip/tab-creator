@@ -3,16 +3,19 @@ import { Board, BoardContext } from "../../contexts/BoardContext";
 import { NotationContext } from "../../contexts/NotationContext";
 import styles from "./Staff.module.css";
 
-function translateNotation(board: Board, notation: string, charLimit: number, changeActive: (pos: number) => void) {
+function translateNotation(
+  board: Board,
+  notation: string,
+  charLimit: number,
+  changeActive: (pos: number, type: "scroll" | "click") => void
+) {
   const notes = notation.split(",") ?? [];
   const staffs = [];
   let staff: (string | string[])[] = ["border"];
   let staffLength = 1;
-  let nonEmptyLength = 1;
 
   for (const note of notes) {
     if (!note) continue;
-    nonEmptyLength++;
     staff.push("empty");
     const concurrent = note.split("-");
     if (!concurrent.at(-1)) concurrent.pop();
@@ -52,7 +55,7 @@ function translateNotation(board: Board, notation: string, charLimit: number, ch
     }
   }
 
-  changeActive(staff.length >= charLimit ? charLimit : nonEmptyLength);
+  changeActive(-1, "scroll");
 
   // Autofill to reach page margins
   for (let i = 0; i < charLimit - staffLength; i++) {
@@ -78,6 +81,7 @@ function createNoteElements(stringCount: number, line: string | string[]) {
     } else if (line === "current") {
       note = "-";
     } else if (line === "border") {
+      empty = true;
       note = "|";
     }
 
@@ -91,7 +95,12 @@ function createNoteElements(stringCount: number, line: string | string[]) {
   return [elements, empty];
 }
 
-function renderTab(board: Board, tab: (string | string[])[][], active: number, changeActive: (pos: number) => void) {
+function renderTab(
+  board: Board,
+  tab: (string | string[])[][],
+  active: number,
+  changeActive: (pos: number, type: "scroll" | "click") => void
+) {
   const staffElements = [];
   let count = 0;
 
@@ -102,18 +111,28 @@ function renderTab(board: Board, tab: (string | string[])[][], active: number, c
     for (let j = 0; j < staff.length; j++) {
       const line = staff[j];
       const [noteElements, empty] = createNoteElements(board.stringCount, line);
-      if (!empty) count++;
+      const id = line === "current" ? (-1).toString() : count.toString();
 
-      console.log(count);
+      if (line instanceof Array) count++;
 
-      if (empty && line !== "current" && line != "border") {
+      if (empty) {
         lineElements.push(<span key={j}>{noteElements}</span>);
       } else {
+        let className;
+        if (id === "-1" && active === -1) {
+          className = styles.current;
+        } else if (active.toString() === id) {
+          className = styles.lineActive;
+        } else {
+          className = styles.line;
+        }
         lineElements.push(
           <span
-            className={active === count ? styles.lineActive : styles.line}
-            onClick={(e) => changeActive(parseInt(e.currentTarget.id))}
-            id={count.toString()}
+            className={className}
+            onClick={(e) => {
+              changeActive(parseInt(e.currentTarget.id), "click");
+            }}
+            id={id}
             key={j}
           >
             {noteElements}
@@ -134,17 +153,12 @@ function renderTab(board: Board, tab: (string | string[])[][], active: number, c
 
 export function Staff() {
   const { board } = useContext(BoardContext);
-  const { notation, lock } = useContext(NotationContext);
+  const { notation, active, changeActive } = useContext(NotationContext);
   const [sheetSize, setSheetSize] = useState<[number, number]>([500, 1200]);
   const [charLimit, setCharLimit] = useState(0);
   const [tab, setTab] = useState<(string | string[])[][]>([[[""]]]);
-  const [active, setActive] = useState(0);
   const fontRef = useRef<HTMLSpanElement>(null);
   const fontSize = fontRef.current ? fontRef.current.clientWidth : 1;
-
-  const changeActive = (pos: number) => {
-    if (!lock) setActive(pos);
-  };
 
   useEffect(() => {
     setCharLimit(Math.round(sheetSize[0] / fontSize));

@@ -20,14 +20,14 @@ export const techniques: TechniqueList = {
   h: new Technique("Hammer-on", "non-open"),
   p: new Technique("Pull-off", "stack"),
   b: new Technique("Bend", "non-open"),
-  r: new Technique("Release", "stack"),
+  r: new Technique("Release", "non-open"),
   "~": new Technique("Vibrato", "unrestrict"),
   "/": new Technique("Slide Up", "stack"),
   "\\": new Technique("Slide Down", "stack"),
 };
 
 export function Controls() {
-  const { technique, setTechnique, lock, setLock } = useContext(NotationContext);
+  const { technique, setTechnique } = useContext(NotationContext);
   const { theme, toggleTheme } = useContext(ThemeContext);
 
   return (
@@ -44,13 +44,6 @@ export function Controls() {
           </button>
         );
       })}
-
-      <button
-        className={lock ? styles.btnToggled : styles.btn}
-        onClick={() => setLock((currentState) => !currentState)}
-      >
-        lock
-      </button>
 
       <button className={styles.btn} onClick={() => toggleTheme()}>
         {theme}
